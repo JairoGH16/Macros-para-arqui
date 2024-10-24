@@ -11,3 +11,21 @@ ENDM
 
 3. Ejemplo de uso:
 cambiar_color_texto 01h; 01h es azul en este caso
+
+Lista de números para varios colores:
+Negro		00h
+Azul		01h
+Verde		02h
+Aguamarina	03h
+Rojo		04h
+Púrpura		05h
+Amarillo	06h
+Blanco grisáceo	07h
+Gris		08h
+Azul claro	09h
+Verde claro	0Ah
+Aguamarina claro 0Bh
+Rojo claro	0Ch
+Rosado		0Dh
+Amarillo claro	0Eh
+Blanco		0Fh
