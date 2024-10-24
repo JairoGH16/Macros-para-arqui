@@ -1,0 +1,13 @@
+Macro para el color
+1. En el data poner:
+hConsole HANDLE ?
+
+2. La macro:
+cambiar_color_texto MACRO
+	INVOKE GetStdHandle, STD_OUTPUT_HANDLE
+	mov hConsole, eax
+	INVOKE SetConsoleTextAttribute, hConsole, numColor ;cambiar por el numero del color deseado
+ENDM
+
+3. Ejemplo de uso:
+cambiar_color_texto 01h; 01h es azul en este caso
