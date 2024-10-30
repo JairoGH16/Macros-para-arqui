@@ -1,0 +1,15 @@
+Esta macro permite ingresar un número por teclado y su valor se le asigna a una variable vacía
+0. se debe importar irvine:
+include irvine32.inc
+
+1. En el data poner:
+nombreDeLaVariableAUsar dd ?
+
+2. La macro:
+ingresar_numero MACRO variableVacia
+	call readint
+	mov variableVacia, eax
+ENDM
+
+3. Ejemplo de uso:
+ingresar_numero nombreDeLaVariableAUsar
