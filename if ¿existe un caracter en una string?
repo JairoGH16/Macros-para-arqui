@@ -1,0 +1,75 @@
+solicita una string, luego se debe ingresar un character, ya se por el usuario o predefinido, si el character existe, al será 1, si no, al será 0
+
+ESTE CÓDIGO TIENE DOS VERSIONES CON FUNCIONALIDAD DIFERENTE
+EN LA PRIMERA VERSIÓN, EL USUARIO INGRESA EL CHARACTER A BUSCAR
+EN LA SEGUNDA VERSIÓN, EL CHARACTER A BUSCAR YA ESTÁ DEFINIDO
+
+Primera versión-------------------------------------------------------------------------------------------------------------------------------------
+1. en data se debe de poner:
+caracter_actual BYTE ?         ; Carácter actual (temporal para el bucle)
+character_a_comparar BYTE ?    ; Carácter a comparar
+msg1 BYTE "Hola mundo", 0      ; Cadena en la que se buscará el carácter
+
+2. la macro:
+buscarCaracterEnStringInput MACRO cadena
+    ; Leer un carácter a comparar desde el usuario
+    call ReadChar
+    mov character_a_comparar, al ; Guardar el carácter ingresado
+    ; Inicializar el índice para recorrer la cadena
+    mov eax, 0  ; Usaremos EAX como índice para recorrer la cadena
+    bucle_comparacion:
+        ; Obtener el carácter actual de la cadena
+        mov bl, cadena[eax] ; Cargar el carácter actual de msg1 en BL
+        cmp bl, 0         ; Verificar si hemos llegado al final de la cadena (0x00)
+        je no_encontrado_char  ; Si llegamos al final, el carácter no se encontró
+        ; Comparar el carácter actual con el carácter ingresado
+        cmp bl, character_a_comparar
+        je encontrado_char     ; Si son iguales, saltar a imprimir mensaje de encontrado
+        ; Incrementar el índice y continuar el bucle
+        add eax, 1
+        jmp bucle_comparacion
+    no_encontrado_char:
+        mov al,0
+        jmp fin_macro
+    encontrado_char:
+        mov al,1
+    fin_macro:
+ENDM
+
+3. ejemplo de uso:
+buscarCaracterEnStringInput msg1 ;recordar que al almacenara el resultado. 1=true. 0=false.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Segunda versión-------------------------------------------------------------------------------------------------------------------------------------------------------
+1. en el data poner:
+    caracter_actual BYTE ?                        ; Carácter actual (temporal)
+    character_a_comparar BYTE "a"                   ; Carácter a comparar se debe poner entre comillas
+    msg1 BYTE "Hola mundo", 0                    ; Cadena en la que se buscará el carácter
+
+2. la macro:
+buscarCaracterEnStringInput MACRO cadena , character_a_comparar
+    ; Inicializar el índice para recorrer la cadena
+    mov eax, 0  ; Usaremos EAX como índice para recorrer la cadena
+    bucle_comparacion:
+        ; Obtener el carácter actual de la cadena
+        mov bl, cadena[eax] ; Cargar el carácter actual de msg1 en BL
+        cmp bl, 0         ; Verificar si hemos llegado al final de la cadena (0x00)
+        je no_encontrado_char  ; Si llegamos al final, el carácter no se encontró
+        ; Comparar el carácter actual con el carácter ingresado
+        cmp bl, character_a_comparar
+        je encontrado_char     ; Si son iguales, saltar a imprimir mensaje de encontrado
+        ; Incrementar el índice y continuar el bucle
+        add eax, 1
+        jmp bucle_comparacion
+    no_encontrado_char:
+        mov al,0
+        jmp fin_macro
+    encontrado_char:
+        mov al,1
+    fin_macro:
+ENDM
+
+3. ejemplo de uso:
+buscarCaracterEnStringInput msg1 , character_a_comparar
+
+también se puede enviar directamente sin haberlo declarado en data:
+buscarCaracterEnStringInput msg1 , "a"
