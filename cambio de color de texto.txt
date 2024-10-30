@@ -1,16 +1,25 @@
-Macro para el color
+Macro para el color del texto
 1. En el data poner:
 hConsole HANDLE ?
+csbi CONSOLE_SCREEN_BUFFER_INFO <>
 
 2. La macro:
 cambiar_color_texto MACRO numColor
-	INVOKE GetStdHandle, STD_OUTPUT_HANDLE
-	mov hConsole, eax
-	INVOKE SetConsoleTextAttribute, hConsole, numColor ;cambiar por el numero del color deseado
+    ; Obtener el handle de la consola
+    INVOKE GetStdHandle, STD_OUTPUT_HANDLE
+    mov hConsole, eax
+    ; Obtener el color actual
+    INVOKE GetConsoleScreenBufferInfo, hConsole, ADDR csbi
+    ; Limpiar los 4 bits bajos para limpiar el color del texto
+    and csbi.wAttributes, 0F0h
+    ; Añadir el nuevo color de texto sin modificar el color del fondo
+    or csbi.wAttributes, numColor
+    ; Establecer el nuevo color con el texto cambiado
+    INVOKE SetConsoleTextAttribute, hConsole, csbi.wAttributes
 ENDM
 
 3. Ejemplo de uso:
-cambiar_color_texto 01h; 01h es azul en este caso
+cambiar_color_texto 01h
 
 Lista de números para varios colores:
 Negro		00h
