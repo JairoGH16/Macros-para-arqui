@@ -1,0 +1,2 @@
+call ReadChar
+; El carácter leído se almacena en AL y de ahí se puede usar para comparar, o moverlo a otra parte.
