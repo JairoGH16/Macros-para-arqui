@@ -1,0 +1,7 @@
+Macro:
+imprimir MACRO cadena
+  mov edx, OFFSET cadena
+  call WriteString
+
+Uso:
+  imprimir cadenaDeTexto
