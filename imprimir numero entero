@@ -1,0 +1,8 @@
+Macro:
+imprimirInt MACRO Int
+  mov eax, Int
+  call WriteInt
+ENDM
+
+Uso:
+  imprimirInt Int
