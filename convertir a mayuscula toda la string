@@ -1,0 +1,31 @@
+CONVIERTE TODA UNA STRING EN MAYUSCULAS, SI HAY NUMEROS O SIMBOLOS LOS OMITE Y NO SE CAE POR ESO
+
+1. para el data:
+cadena BYTE "*/Hola, Mundo! 123", 0    ; Cadena a procesar (terminada en cero)
+
+2. la macro:
+convertirMayuscula MACRO cadena
+    lea esi, cadena         ; Apuntar al inicio de la cadena
+    convertir:
+        mov al, BYTE PTR [esi] ; Cargar el carácter actual en AL
+        cmp al, 0              ; Comparar con 0 (nulo, fin de la cadena)
+        je fin_convertir       ; Si es nulo, finalizar la conversión
+        ; Comprobar si el carácter es una letra minúscula (a-z)
+        cmp al, 'a'            ; Comparar con 'a'
+        jl no_convertir        ; Si es menor que 'a', no convertir
+        cmp al, 'z'            ; Comparar con 'z'
+        jg no_convertir        ; Si es mayor que 'z', no convertir
+        ; Convertir a mayúscula restando 32 (diferencia en ASCII)
+        sub al, 32
+        mov BYTE PTR [esi], al ; Almacenar el carácter convertido
+    no_convertir:
+        inc esi                ; Avanzar al siguiente carácter
+        jmp convertir          ; Repetir el proceso
+    fin_convertir:
+ENDM
+
+3. ejemplo de uso:
+convertirMayuscula cadena
+;estas ultimas dos lineas son solo de prueba para mostrar la cadena convertida
+mov edx, OFFSET cadena
+    call WriteString
