@@ -1,0 +1,44 @@
+CUENTA CUANTAS VECES APARECE UN CHARACTER EN UNA STRING, EL RESULTADO SE ALMACENA EN EAX
+
+1. en el data:
+caracter_actual BYTE ?                        ; Carácter actual (temporal)
+character_a_comparar BYTE "a"                   ; Carácter a comparar, dejarlo como ? si lo ingresa el usuario
+msg1 BYTE "aAasBx", 0                    ; Cadena en la que se buscará el carácter
+
+2. la macro:
+buscarCaracterEnStringInput MACRO cadena, character_a_comparar
+    LOCAL bucle_comparacion, fin_macro
+    ; Inicializar el índice y el contador
+    mov esi, 0           ; ESI como índice, inicializado en 0
+    mov ecx, 0           ; ECX como contador, inicializado en 0
+bucle_comparacion:
+    ; Obtener el carácter actual de la cadena
+    mov al, cadena[esi]  ; Cargar el carácter actual de la cadena en AL
+    cmp al, 0            ; Verificar si hemos llegado al final de la cadena (0x00)
+    je fin_macro         ; Si llegamos al final, terminar
+
+    ; Comparar el carácter actual con el carácter ingresado
+    cmp al, character_a_comparar
+    jne continuar        ; Si no son iguales, continuar
+    ; Incrementar el contador si es igual
+    inc ecx
+continuar:
+    ; Incrementar el índice y continuar el bucle
+    inc esi
+    jmp bucle_comparacion
+fin_macro:
+    mov eax, ecx         ; Almacenar el número de coincidencias en EAX
+ENDM
+
+3. Uso
+en la versión 1 el caracter lo ingresa el usuario, en la version 2 está predefinido por el programador
+Version 1:
+call readchar
+mov character_a_comparar,al
+buscarCaracterEnStringInput msg1 , character_a_comparar
+call writeint ;esto es solo de prueba porque el resultado se almacena en eax
+
+Version 2:
+buscarCaracterEnStringInput msg1 , character_a_comparar
+call writeint ;esto es solo de prueba porque el resultado se almacena en eax
+  
