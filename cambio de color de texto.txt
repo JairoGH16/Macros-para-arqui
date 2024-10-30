@@ -3,7 +3,7 @@ Macro para el color
 hConsole HANDLE ?
 
 2. La macro:
-cambiar_color_texto MACRO
+cambiar_color_texto MACRO numColor
 	INVOKE GetStdHandle, STD_OUTPUT_HANDLE
 	mov hConsole, eax
 	INVOKE SetConsoleTextAttribute, hConsole, numColor ;cambiar por el numero del color deseado
