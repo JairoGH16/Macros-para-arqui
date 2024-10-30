@@ -1,0 +1,40 @@
+Macro para el color del fondo de los textos, sólo el fondo
+1. En el data poner:
+hConsole HANDLE ?
+csbi CONSOLE_SCREEN_BUFFER_INFO <>
+
+2. La macro:
+cambiarColorFondoTexto MACRO numColor
+    ; Obtener el handle de la consola
+    INVOKE GetStdHandle, STD_OUTPUT_HANDLE
+    mov hConsole, eax
+    ; Obtener el color actual
+    INVOKE GetConsoleScreenBufferInfo, hConsole, ADDR csbi
+    ; Limpiar los 4 bits más altos para limpiar el color de fondo
+    and csbi.wAttributes, 0Fh
+    ; Añadir el nuevo color de fondo sin modificar el color del texto
+    or csbi.wAttributes, newBackgroundColor shl 4
+    ; Establecer el nuevo color con el fondo cambiado
+    INVOKE SetConsoleTextAttribute, hConsole, csbi.wAttributes
+ENDM
+
+3. Ejemplo de uso:
+cambiarColorFondoTexto 02h
+
+Lista de números para varios colores:
+Negro		00h
+Azul		01h
+Verde		02h
+Aguamarina	03h
+Rojo		04h
+Púrpura		05h
+Amarillo	06h
+Blanco grisáceo	07h
+Gris		08h
+Azul claro	09h
+Verde claro	0Ah
+Aguamarina claro 0Bh
+Rojo claro	0Ch
+Rosado		0Dh
+Amarillo claro	0Eh
+Blanco		0Fh
