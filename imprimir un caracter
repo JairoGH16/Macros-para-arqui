@@ -1,0 +1,6 @@
+mov al, 'A'
+call WriteChar
+
+Notas de usos:
+se puede imprimir un solo character usando comillas "" o ''
+se puede imprimir el caracter deseado de una cadena usando cadena[0] entre corchetes la posición del caracter en la string, si no se especifica se imprime el primero
