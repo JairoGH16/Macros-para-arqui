@@ -1,8 +1,8 @@
 Macro:
-imprimir MACRO cadena
+imprimirString MACRO cadena
   mov edx, OFFSET cadena
   call WriteString
 ENDM
 
 Uso:
-  imprimir cadenaDeTexto
+  imprimirString cadenaDeTexto
