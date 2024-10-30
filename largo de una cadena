@@ -1,0 +1,21 @@
+VE QUE TAN LARGA ES UNA CADENA, EL RESULTADO SE ALMACENA EN EAX
+
+1. en data:
+cadena BYTE "Hola, Mundo!", 0  ; Cadena a procesar (terminada en cero)
+
+2. la macro:
+contarLongitud MACRO cadena
+    lea esi, cadena         ; Apuntar al inicio de la cadena
+    xor eax, eax            ; Inicializar el contador de longitud a 0
+    contar:
+        cmp BYTE PTR [esi], 0 ; Comparar el carácter actual con 0 (nulo)
+        je fin_contar         ; Si es nulo, salir del bucle
+        inc eax               ; Incrementar el contador
+        inc esi               ; Avanzar al siguiente carácter
+        jmp contar            ; Repetir el proceso
+    fin_contar:
+ENDM
+
+3. ejemplo de uso:
+    contarLongitud cadena ; el resultado se guarda en eax
+    call WriteDec ; como prueba se muestra la longitud de la cadena almacenada en EAX
