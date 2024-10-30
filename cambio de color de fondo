@@ -13,7 +13,7 @@ cambiarColorFondoTexto MACRO numColor
     ; Limpiar los 4 bits más altos para limpiar el color de fondo
     and csbi.wAttributes, 0Fh
     ; Añadir el nuevo color de fondo sin modificar el color del texto
-    or csbi.wAttributes, newBackgroundColor shl 4
+    or csbi.wAttributes, numColor shl 4
     ; Establecer el nuevo color con el fondo cambiado
     INVOKE SetConsoleTextAttribute, hConsole, csbi.wAttributes
 ENDM
