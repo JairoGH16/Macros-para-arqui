@@ -1,0 +1,49 @@
+EL RESULTADO SE GUARDA EN LA VARIABLE CREADA
+
+INCLUDE Irvine32.inc
+
+.DATA
+    binarioStr BYTE 33 DUP(0)    ; Espacio para 32 bits + NULL terminador
+
+.CODE
+; Macro para convertir un número en binario y omitir ceros iniciales
+DecToBin MACRO num
+    LOCAL bitLoop, setBitOne, nextBit, skipBit, finMacro
+    mov eax, num                 ; Cargar el número en eax
+    mov ecx, 32                  ; Número de bits para un entero de 32 bits
+    mov esi, OFFSET binarioStr   ; Apuntar al inicio de la cadena binaria
+    mov edi, 0                   ; Bandera para marcar el primer '1' encontrado
+    bitLoop:
+    shl eax, 1                   ; Desplazar el valor a la izquierda
+    jc setBitOne                 ; Si el bit es 1, almacenar '1'
+    cmp edi, 1                   ; Si no hemos encontrado el primer '1'
+    jne skipBit                  ; Saltar este bit si es un cero inicial
+    mov BYTE PTR [esi], '0'      ; Almacenar '0' después del primer '1'
+    inc esi
+    jmp nextBit
+    setBitOne:
+    mov BYTE PTR [esi], '1'      ; Almacenar '1' si el bit es 1
+    inc esi                      ; Avanzar al siguiente carácter
+    mov edi, 1                   ; Marcar que se encontró el primer '1'
+    nextBit:
+    loop bitLoop                 ; Repetir para los 32 bits
+    mov BYTE PTR [esi], 0        ; Terminar la cadena binaria con NULL
+    jmp finMacro
+    skipBit:
+    loop bitLoop                 ; Continuar si es cero inicial
+    finMacro:
+ENDM
+
+main PROC
+
+    ; Convertir el número a binario
+    DecToBin 25  ; Cambiar 25 por el número deseado
+
+    ; Imprimir el resultado en binario para prueba nada más
+    mov edx, OFFSET binarioStr
+    call WriteString             ; Imprimir la cadena resultante en binario
+    call Crlf                    ; Nueva línea
+
+    exit                
+main ENDP
+END main
