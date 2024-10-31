@@ -1,0 +1,67 @@
+LOS RESULTADOS SE GUARDAN EN EAX, SI EL STRING ES VALIDO GUARDA EL NUMERO, SI NO SIRVE GUARDA -1
+
+INCLUDE Irvine32.inc
+
+.data
+inputString BYTE "12345", 0         ; String a convertir
+errorMsg BYTE "El string no es numerico.", 0
+successMsg BYTE "El numero convertido es: ", 0
+
+.code
+; Macro para convertir un string a entero
+; Entrada: ESI apunta al string de entrada
+; Salida: EAX contiene el valor entero si es numérico, -1 si no es numérico
+numToStringConvert MACRO inputStr
+    LOCAL endLoop, errorConversion
+    mov esi, OFFSET inputStr      ; Establecer la dirección del string de entrada en ESI
+    xor eax, eax                  ; Limpiar EAX (resultado)
+    xor ebx, ebx                  ; EBX se usará para el acumulador
+    ; Loop de conversión
+    checkLoop:
+        mov al, [esi]             ; Cargar el carácter actual
+        test al, al               ; Verificar si es el final del string (carácter nulo)
+        jz endLoop                ; Si es el final, ir a 'endLoop'
+        ; Comprobar si el carácter es un dígito (entre '0' y '9')
+        cmp al, '0'
+        jb errorConversion         ; Si es menor que '0', no es numérico
+        cmp al, '9'
+        ja errorConversion         ; Si es mayor que '9', no es numérico
+        ; Convertir carácter de ASCII a valor numérico y acumular en EBX
+        sub al, '0'               ; Convertir carácter a dígito numérico
+        imul ebx, ebx, 10         ; Multiplicar valor acumulado por 10
+        add ebx, eax              ; Agregar el dígito convertido a EBX (acumulador)
+        ; Avanzar al siguiente carácter
+        inc esi
+        jmp checkLoop
+    errorConversion:
+        mov eax, -1               ; Indicar error si no es numérico
+        jmp endLoop
+    endLoop:
+        mov eax, ebx              ; Pasar el resultado final a EAX
+ENDM
+
+main PROC
+
+    numToStringConvert inputString
+    ; Verificar el resultado de la conversión
+    cmp eax, -1
+    je showError                     ; Si eax es -1, mostrar mensaje de error
+
+    ; Mostrar el resultado convertido
+    mov edx, OFFSET successMsg
+    call WriteString
+    call WriteInt                    ; Imprimir el valor de EAX (número convertido)
+    jmp endProgram
+
+showError:
+    ; Mostrar mensaje de error si el string no es numérico
+    mov edx, OFFSET errorMsg
+    call WriteString
+
+endProgram:
+    call Crlf
+    call WaitMsg
+    exit
+main ENDP
+
+END main
