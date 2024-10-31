@@ -1,0 +1,49 @@
+1. en el data:
+buffer BYTE 10 DUP(0)       ; Espacio para la cadena ingresada (caracteres + 1 para el carácter nulo)
+len DWORD 9                ; Longitud máxima de caracteres permitida sin contar el nulo
+
+2. la macro:
+ingresarCadena MACRO buffer, len
+    mov ecx, len            ; Cargar el límite máximo de caracteres en `ECX`
+    mov edi, OFFSET buffer  ; Cargar la dirección de `buffer` en `EDI`
+    xor ebx, ebx            ; Inicializar el contador en `EBX` en 0
+  lee_caracter:
+    call ReadChar           ; Leer un carácter del teclado y almacenarlo en `AL`
+    ; Verificar si la tecla es ENTER
+    cmp al, 13              ; Comparar `AL` con ENTER (ASCII 13)
+    je fin_lectura          ; Si es ENTER, salir del bucle
+    ; Verificar si la tecla es Backspace
+    cmp al, 8               ; Comparar `AL` con Backspace (ASCII 8)
+    je retroceso            ; Si es Backspace, borrar el último carácter
+    ; Verificar si se ha alcanzado el límite de caracteres
+    cmp ebx, ecx            ; Comparar `EBX` (contador) con `ECX` (límite)
+    jge lee_caracter        ; Si se alcanzó el límite, ignorar el carácter y seguir leyendo
+    ; Almacenar el carácter en el buffer y mostrarlo
+    mov [edi], al           ; Almacenar el carácter en `buffer` en la posición de `EDI`
+    call WriteChar          ; Imprimir el carácter ingresado en pantalla
+    inc edi                 ; Avanzar `EDI` al siguiente byte en `buffer`
+    inc ebx                 ; Incrementar el contador de caracteres (`EBX`)
+    jmp lee_caracter        ; Repetir el ciclo para el siguiente carácter
+  retroceso:
+    ; Verificar si hay algo que borrar
+    cmp ebx, 0              ; Si el contador es 0, no hay nada que borrar
+    je lee_caracter         ; Si no hay caracteres, saltar a leer el siguiente
+    dec edi                 ; Retroceder `EDI` para apuntar al último carácter ingresado
+    dec ebx                 ; Decrementar el contador de caracteres
+    mov al, 8               ; ASCII de Backspace
+    call WriteChar          ; Mover el cursor hacia atrás en la pantalla
+    mov al, ' '             ; Espacio en blanco para borrar el carácter en pantalla
+    call WriteChar          ; Imprimir el espacio en blanco
+    mov al, 8               ; ASCII de Backspace
+    call WriteChar          ; Mover el cursor hacia atrás nuevamente
+    jmp lee_caracter        ; Volver al bucle para leer el siguiente carácter
+  fin_lectura:
+    mov BYTE PTR [edi], 0   ; Colocar un carácter nulo al final de la cadena
+ENDM
+
+3. ejemplo de uso:
+ingresarCadena buffer, len
+; Mostrar la cadena ingresada para confirmar, estas últimas tres líneas sólo son para probar
+call crlf
+    mov edx, OFFSET buffer
+    call WriteString
