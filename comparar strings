@@ -1,0 +1,59 @@
+COMPARA STRINGS A VER SI SON IGUALES, GUARDA EL RESULTADO EN EAX. TRUE=1. FALSE=0.
+
+  INCLUDE Irvine32.inc
+
+.data
+    string1 db "Hello, World!", 0        ; Primera cadena
+    string2 db "Hello, World!", 0        ; Segunda cadena
+    resultMessage db "Las cadenas son iguales.", 0
+    notEqualMessage db "Las cadenas son diferentes.", 0
+
+.code
+
+; Macro para comparar dos cadenas
+CompareStrings MACRO str1, str2
+    LOCAL compare_loop, strings_not_equal, strings_equal
+    mov esi, str1                        ; Puntero a la primera cadena
+    mov edi, str2                        ; Puntero a la segunda cadena
+    xor eax, eax                         ; Limpiar eax (0 = diferentes, 1 = iguales)
+compare_loop:
+    mov al, [esi]                        ; Cargar caracter de la primera cadena en AL
+    mov bl, [edi]                        ; Cargar caracter de la segunda cadena en BL
+    cmp al, bl                           ; Comparar los caracteres
+    jne strings_not_equal                ; Si son diferentes, ir a strings_not_equal
+    test al, al                          ; Verificar si es el final de la cadena (byte nulo)
+    je strings_equal                     ; Si es el final y son iguales, ir a strings_equal
+    inc esi                              ; Incrementar puntero de la primera cadena
+    inc edi                              ; Incrementar puntero de la segunda cadena
+    jmp compare_loop                     ; Repetir el ciclo
+strings_not_equal:
+    mov eax, 0                           ; Indicar que las cadenas son diferentes
+    jmp compare_done                     ; Saltar al final de la comparación
+strings_equal:
+    mov eax, 1                           ; Indicar que las cadenas son iguales
+compare_done:
+ENDM
+
+main PROC
+    ; Llama a la macro para comparar las dos cadenas
+    CompareStrings OFFSET string1, OFFSET string2
+
+    ; Verificar el resultado de la comparación, de aqui para abajo todo es de prueba
+    cmp eax, 1                           ; Comparar eax con 1
+    je equal_message                     ; Si eax es 1, las cadenas son iguales
+    jne not_equal_message                ; Si eax es 0, las cadenas son diferentes
+
+equal_message:
+    mov edx, OFFSET resultMessage        ; Apuntar al mensaje de iguales
+    jmp display_message                  ; Saltar a la impresión del mensaje
+
+not_equal_message:
+    mov edx, OFFSET notEqualMessage      ; Apuntar al mensaje de no iguales
+
+display_message:
+    call WriteString                     ; Imprimir el mensaje
+    call Crlf                            ; Salto de línea
+    exit                                 ; Salir del programa
+
+main ENDP
+END main
