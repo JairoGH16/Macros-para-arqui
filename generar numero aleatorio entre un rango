@@ -1,0 +1,28 @@
+TOMA UN NUMERO MENOR Y OTRO MAYOR, UNA VARIABLE, GENERA UN NUMERO ALEATORIO ENTRE EL RANGO DE ESOS NUMEROS Y LO GUARDA EN LA VARIABLE
+
+1. en el data:
+numeroRandom DWORD ?    ; Variable de ejemplo donde se almacenará el número aleatorio
+
+2. la macro:
+GenerateRandom MACRO min, max, resultVar
+    LOCAL range          ; Variable local para almacenar el rango (max - min + 1)
+    mov eax, min         ; Cargar el valor mínimo en EAX
+    mov ecx, max         ; Cargar el valor máximo en ECX
+    ; Calcular el rango
+    mov edx, ecx         ; Copiar el valor max en EDX
+    sub edx, eax         ; Calcular (max - min)
+    inc edx              ; Asegurarse de incluir el límite superior en el rango
+    ; Generar un número aleatorio en el rango
+    call RandomRange     ; Llamar a la función de Irvine32 para generar un número aleatorio en el rango [0, max-min]
+    add eax, min         ; Sumar el valor mínimo para ajustar el rango
+    ; Guardar el número aleatorio en la variable especificada
+    mov resultVar, eax   ; Guardar el número aleatorio en la variable resultVar
+ENDM
+
+3. ejemplo de uso:
+call Randomize ; PONERLO SIEMPRE Inicializa el generador de números aleatorios
+GenerateRandom 10, 20, numeroRandom ;aquí es donde se manda el número menor, mayor y variable para almacenar resultado, en ese orden estricto
+; Imprimir el número aleatorio generado, estas últimas 3 líneas son sólo de prueba
+    mov eax, numeroRandom
+    call WriteDec
+    call Crlf
