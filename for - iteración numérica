@@ -1,0 +1,32 @@
+UN SIMPLE FOR QUE REALIZA UNA ACCIÓN X CANTIDAD DE VECES
+
+.data
+helloMsg BYTE "Hola mundo", 0
+
+la macro:
+; Parametros:
+;   num - número hasta el cual se quiere contar
+;   action - la acción a realizar en cada iteración (por ejemplo, imprimir un mensaje)
+forNumerico MACRO num, action
+    LOCAL loopStart, loopEnd       ; Etiquetas locales para el inicio y fin del bucle
+    mov ecx, 1                     ; Inicializar contador en 0
+  loopStart:
+    cmp ecx, num                   ; Comparar contador con el número límite
+    jg loopEnd                     ; Si ecx es mayor que el número límite, salir del bucle
+    action                         ; Ejecutar la acción especificada
+    inc ecx                        ; Incrementar el contador
+    jmp loopStart                  ; Volver al inicio del bucle
+loopEnd:
+ENDM
+
+ejemplo de uso:
+    ; Llamar a la macro for numerico, con límite de 5, y acción de imprimir "Hola mundo"
+    forNumerico 5, call PrintHello ; se reemplaza por la acción, en este caso se está suponiendo que PrintHello existe
+
+; Subrutina para imprimir "Hola mundo" solo para probar
+PrintHello PROC
+    mov edx, OFFSET helloMsg       ; Dirección del mensaje "Hola mundo"
+    call WriteString               ; Imprimir el mensaje
+    call Crlf                      ; Salto de línea
+    ret
+PrintHello ENDP
