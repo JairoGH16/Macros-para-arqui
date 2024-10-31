@@ -1,0 +1,70 @@
+INCLUDE Irvine32.inc
+
+.data
+    inputBuffer BYTE 100 DUP(0)         ; Espacio para el string ingresado
+    invertedBuffer BYTE 100 DUP(0)      ; Espacio para el string invertido
+    prompt BYTE "Ingrese un string: ", 0
+    confirm BYTE "String ingresado: ", 0
+    invertedConfirm BYTE "String invertido: ", 0
+
+.code
+InvertirString MACRO
+    ; Solicitar entrada de usuario
+    mov edx, OFFSET prompt
+    call WriteString
+
+    ; Leer string ingresado por el usuario
+    mov edx, OFFSET inputBuffer          ; Dirección del buffer de entrada
+    mov ecx, SIZEOF inputBuffer          ; Tamaño del buffer
+    call ReadString                      ; Leerá hasta 99 caracteres y pondrá terminador nulo
+
+    ; Confirmar que se capturó la entrada
+    mov edx, OFFSET confirm
+    call WriteString
+    mov edx, OFFSET inputBuffer          ; Mostrar el string ingresado
+    call WriteString                     ; Mostrar el string ingresado
+
+    ; Calcular la longitud del string (hasta el terminador nulo)
+    mov esi, OFFSET inputBuffer          ; Puntero al inicio del buffer de entrada
+    mov ecx, 0                           ; Inicializamos el contador de longitud
+lengthLoop:
+    cmp BYTE PTR [esi + ecx], 0          ; Buscar el final del string
+    je  endLength                        ; Terminar si encuentra el fin
+    inc ecx                              ; Incrementar el contador
+    jmp lengthLoop
+endLength:
+    mov edi, ecx                         ; Guardar la longitud en EDI
+
+    ; Invertir el string y almacenarlo en el buffer invertido
+    mov ebx, 0                           ; Índice para el buffer invertido
+    dec edi                              ; Decrementar para usar como índice (0-indexado)
+
+invertLoop:
+    cmp ebx, ecx                         ; Comparar índice del buffer invertido con la longitud
+    jge endInvert                        ; Si el índice del buffer invertido es mayor o igual, terminar
+
+    ; Copiar el carácter invertido
+    mov al, [esi + edi]                  ; Cargar el carácter del buffer de entrada
+    mov [invertedBuffer + ebx], al      ; Almacenar en el buffer invertido
+
+    ; Actualizar índices
+    inc ebx                              ; Incrementar índice del buffer invertido
+    dec edi                              ; Decrementar índice del buffer de entrada
+    jmp invertLoop
+endInvert:
+
+    ; Agregar terminador nulo al final del string invertido
+    mov BYTE PTR [invertedBuffer + ebx], 0
+
+    ; Mostrar el string invertido
+    mov edx, OFFSET invertedConfirm
+    call WriteString
+    mov edx, OFFSET invertedBuffer        ; Mostrar el string invertido
+    call WriteString
+ENDM
+
+main PROC
+    InvertirString
+main ENDP
+
+END main
