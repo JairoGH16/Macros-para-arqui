@@ -1,0 +1,50 @@
+EL RESULTADO SE GUARDA EN LA VARIABLE DECLARADA
+
+INCLUDE Irvine32.inc
+
+.data
+hexString BYTE 12 DUP(0)        ; Cadena para almacenar el resultado en hexadecimal
+
+.code
+DECIMAL_TO_HEX MACRO decimalValue
+    mov eax, decimalValue         ; Cargar el valor decimal en EAX
+
+    ; Inicialización de la cadena para el resultado en hexadecimal
+    mov ecx, OFFSET hexString     ; Puntero al final de la cadena
+    add ecx, 11                   ; Apunta al último byte (reservado para null)
+    mov byte ptr [ecx], 0         ; Termina la cadena con null
+
+    mov ebx, 16                   ; Base hexadecimal
+
+    ; Bucle de conversión de decimal a hexadecimal
+    ConvLoop:
+        mov edx, 0                ; Limpiar el valor de EDX
+        div ebx                   ; Dividir EAX entre 16, el cociente en EAX, el residuo en EDX
+        cmp dl, 9                 ; Comparar el residuo con 9
+        jle IsNumber              ; Si es menor o igual a 9, es un número ('0'-'9')
+        add dl, 'A' - 10          ; Convertir a carácter 'A'-'F' si es 10-15
+        jmp StoreChar
+    IsNumber:
+        add dl, '0'               ; Convertir el residuo a carácter ASCII '0'-'9'
+    StoreChar:
+        dec ecx                   ; Mover el puntero de cadena hacia atrás
+        mov [ecx], dl             ; Almacenar el carácter en la cadena
+
+        test eax, eax             ; Verificar si el cociente es 0
+        jnz ConvLoop              ; Si no es 0, continuar el bucle
+
+    ; Imprimir la cadena desde el inicio del número hexadecimal
+    mov edx, ecx                  ; Mover el puntero al inicio de la cadena en EDX
+    call WriteString              ; Imprimir la cadena desde EDX
+
+ENDM
+
+main PROC
+    ; Llamada a la macro para convertir el número a hexadecimal
+    DECIMAL_TO_HEX 90
+
+    call Crlf                    ; Nueva línea
+    exit
+main ENDP
+
+END main
