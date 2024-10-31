@@ -1,0 +1,28 @@
+CONVIERTE UN ENTERO A FLOTANTE
+
+1. para el data:
+buffer BYTE 12 DUP(0)       ; buffer para almacenar la cadena del número convertido
+;recordar que los enteros se declaran como DWORD por si se va a declarar aquí
+
+2. la macro:
+IntToStr MACRO number
+    LOCAL convert_loop       ; etiqueta local para el bucle de la macro
+    mov eax, number          ; mueve el número proporcionado al registro EAX
+    mov ecx, 10              ; base decimal
+    lea esi, buffer + 11     ; apunta al final del buffer
+    mov byte ptr [esi], 0    ; añade el terminador nulo
+  convert_loop:
+    mov edx, 0               ; limpia EDX para la división
+    div ecx                  ; divide EAX entre 10, residuo en EDX, cociente en EAX
+    add dl, '0'              ; convierte el dígito a ASCII
+    dec esi                  ; mueve el puntero hacia atrás en el buffer
+    mov [esi], dl            ; almacena el dígito en el buffer
+    test eax, eax            ; verifica si EAX es 0
+    jnz convert_loop         ; si no es cero, continuar el bucle
+ENDM
+
+3. ejemplo de uso:
+IntToStr 123             ; llama a la macro pasando el número o variable directamente
+    ; Estas últimas dos son de prueba, mostrar el resultado en pantalla
+    mov edx, esi             ; ESI apunta al inicio de la cadena en buffer
+    call WriteString         ; imprime la cadena en pantalla
